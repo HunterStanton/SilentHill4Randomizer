@@ -13,16 +13,18 @@ int __cdecl PlayerDamageHook(int unknown, float damage)
 	return PlayerDamage.fun(unknown, damage);
 }
 
-int possibleEnemies[8] = { 2, 3, 6, 7, 8, 0xA, 0x10, 0x11 };
+int possibleEnemies[9] = { 2, 3, 5, 7, 8, 9, 0xA, 0x10, 0x11 };
 injector::hook_back<int* (__cdecl*)(unsigned int)> EnemyKindTableGetAddress;
 int* __cdecl EnemyKindTableGetAddressHook(unsigned int enemyId)
 {
 	PLOG(plog::info) << "Spawning enemy type: " << enemyId;
 
-	//if (enemyId == 10)
-	//{
-	//	enemyId = possibleEnemies[rand() % 8];
-	//}
+	// shuffle all basic enemy types, no ghosts, no wall monster replacements, no boss replacements
+	if (enemyId == 10 || enemyId == 2 || enemyId == 3 || enemyId == 4 || enemyId == 6 || enemyId == 7 || enemyId == 8 || enemyId == 9)
+	{
+		// replace dogs with anything
+		enemyId = possibleEnemies[rand() % 9];
+	}
 
 	return EnemyKindTableGetAddress.fun(enemyId);
 }
@@ -39,7 +41,7 @@ void __cdecl GameFileLoadSceneHook(int scene, int stage)
 	PLOG(plog::info) << "Loaded scene " << scene << " on stage " << stage;
 
 	// load all enemy .bin files upon the loading of every scene so they can be spawned
-	// this is not really a memory or performance concern the game is almost 20 years old and the amount of memory needed to load it all at once is 40mb
+	// this is not really a memory or performance concern the game is almost 20 years old and the amount of memory needed to load it all at once is less than 40mb
 	GameFileLoadScene.fun(scene, stage);
 	sfFileLoad.fun(0xf000f020);
 	sfFileLoad.fun(0xf000f064);
@@ -115,10 +117,10 @@ void Init()
 	auto pattern = hook::pattern("E8 A3 34 00 00");
 	GameFileLoadScene.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), GameFileLoadSceneHook, true).get();
 
-	pattern = hook::pattern("E8 55 FD 07 00");
+	pattern = hook::pattern("E8 E5 FE 07 00");
 	sfFileLoad.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), sfFileLoadHook, true).get();
 
-	pattern = hook::pattern("E8 A7 39 F4 FF");
+	pattern = hook::pattern("E8 17 3A F4 FF");
 	EnemyKindTableGetAddress.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), EnemyKindTableGetAddressHook, true).get();
 
 	pattern = hook::pattern("E8 0D FE FF FF");
