@@ -24,4 +24,7 @@ Use the Ultimate ASI Loader, rename the DLL to dsound.dll, then extract the cont
 - Random models in cutscenes
 - SFX that is correct for each player model
 
+## Special Thanks
+* roocker666 - doing some research on how the game stores room layouts in the executable and sending it to me
+
 Got any suggestions for what you'd like to see here? Found a bug? Speedran this and want to show me? Reach out to me on Twitter @hun10sta and I'd be happy to take a look or answer a question :) 
