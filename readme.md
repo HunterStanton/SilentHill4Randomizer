@@ -5,7 +5,7 @@ A randomizer for Silent Hill 4: The Room, for the *GOG version* of the game. Thi
 Automagically randomizes all enemies so you can encounter nurses on Forest world and other wacky things. Also randomly gives you one of three player models, default Henry, nurse Eileen, or regular Eileen.
 
 ## Installation
-Use the Ultimate ASI Loader, rename the DLL to dsound.dll, then extract the contents of the .7z into the Silent Hill 4 game directory. You should end up with a /scripts/ folder and a couple new files inside /data/.
+Use the [Ultimate ASI Loader](https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases) (32-bit version as Silent Hill 4 is a 32-bit game), rename the DLL to dsound.dll, then extract the contents of the .7z into the Silent Hill 4 game directory. You should end up with a /scripts/ folder and a couple new files inside /data/.
 
 ## Demo
 [![Silent Hill 4 Randomizer demo video](https://img.youtube.com/vi/yhN_v3E4eDw/0.jpg)](https://www.youtube.com/watch?v=yhN_v3E4eDw)
