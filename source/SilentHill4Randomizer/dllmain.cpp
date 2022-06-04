@@ -93,7 +93,7 @@ void __cdecl GameFileLoadSceneHook(int scene, int stage)
 	return;
 }
 
-std::vector<LPCSTR> playerModels = { ".\\data\\henry01.bin", ".\\data\\randomizer_eileen.bin", ".\\data\\randomizer_eileen_sexy.bin", ".\\data\\randomizer_cynthia.bin" };
+std::vector<LPCSTR> playerModels = { ".\\data\\henry01.bin", ".\\data\\randomizer_eileen.bin", ".\\data\\randomizer_eileen_sexy.bin" };
 
 // didn't want to dig super deep in the game code so this is the basic file reading function
 injector::hook_back<void(__cdecl*)(LPCSTR, HANDLE*)> LoadFile;
@@ -104,12 +104,12 @@ void __cdecl LoadFileHook(LPCSTR file, HANDLE* handle)
 	if (strcmp(file, ".\\data\\henry01.bin") == 0)
 	{
 
-		LPCSTR model = playerModels[0];
+		LPCSTR model = playerModels[std::rand() / ((RAND_MAX + 1u) / playerModels.size())];
 
 		// this needs to be done or it will always give you the last item in the player model vector, every time
 		for (int i = 0; i < 10; i++)
 		{
-			model = playerModels[0];
+			model = playerModels[std::rand() / ((RAND_MAX + 1u) / playerModels.size())];
 		}
 
 		PLOG(plog::info) << "Setting a random playermodel " << model;
