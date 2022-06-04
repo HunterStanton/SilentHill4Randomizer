@@ -26,6 +26,21 @@ enum EnemyKind : unsigned char
 	ENEMY_KIND_ALL = 0x13
 };
 
+struct EnemyFileMapping
+{
+	EnemyKind kind;
+	unsigned int fileId;
+	unsigned int tableAddr;
+};
+
+struct EnemyKindTableEntry
+{
+	unsigned int* sfConstructor;
+	unsigned int* objConstructor;
+	unsigned int* objDestructor;
+	unsigned int* objDraw;
+};
+
 enum EnemySeKind : unsigned char
 {
 	ENEMY_SE_KIND_NOTHING,
