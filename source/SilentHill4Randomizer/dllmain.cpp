@@ -3,9 +3,10 @@
 #include <fstream>
 #include <plog/Log.h>
 #include "plog/Initializers/RollingFileInitializer.h"
-#include "sh4/Enemy.h"
-#include "sh4/Game.h"
-#include "sh4/Item.h"
+#include "sh4/en_kind.h"
+#include "sh4/game.h"
+#include "sh4/game_item.h"
+#include "sh4/game_gi_para.h"
 
 injector::hook_back<int(__cdecl*)(int, float)> PlayerDamage;
 int __cdecl PlayerDamageHook(int unknown, float damage)
@@ -23,25 +24,25 @@ void __cdecl sfFileLoadHook(unsigned int fileId)
 
 }
 
-// the IDs of most of the common enemies besides the wheelchair as its crashy on non-hospital rooms
-std::vector<EnemyFileMapping> possibleEnemies = { {ENEMY_KIND_MUSH, 0xf000f066, 0x00615368}, {ENEMY_KIND_BUZZ, 0xf000f0b9, 0x00615378}, {ENEMY_KIND_JINMEN, 0xf000f071, 0x006153b8}, {ENEMY_KIND_TWINS, 0xf000f0bd, 0x006153c8}, {ENEMY_KIND_HIL, 0xf000f06e, 0x006153d8}, {ENEMY_KIND_HYENA, 0xf000f068, 0x006153e8}, {ENEMY_KIND_KILLER, 0xf000f072, 0x00615448}, {ENEMY_KIND_NURSE, 0xf000f0e8, 0x00615458 } };
-
 injector::hook_back<unsigned int(__cdecl*)(EnemyKind)> EnemyKindTableGetAddress;
 unsigned int __cdecl EnemyKindTableGetAddressHook(EnemyKind enemyType)
 {
-	PLOG(plog::info) << "Spawning enemy type: " << enemyType;
 
-	// shuffle all basic enemy types, no ghosts, no wall monster replacements, no boss replacements
-	if (enemyType == ENEMY_KIND_HYENA || enemyType == ENEMY_KIND_MUSH || enemyType == ENEMY_KIND_BUZZ || enemyType == ENEMY_KIND_MM || enemyType == ENEMY_KIND_WHEEL || enemyType == ENEMY_KIND_JINMEN || enemyType == ENEMY_KIND_TWINS || enemyType == ENEMY_KIND_HIL || enemyType == ENEMY_KIND_NURSE)
+	// shuffle all basic enemy types, no ghosts, no wall monster replacements, no boss replacements, no ghost replacements
+	if (enemyType == ENEMY_KIND_HYENA || enemyType == ENEMY_KIND_MUSH || enemyType == ENEMY_KIND_WHEEL || enemyType == ENEMY_KIND_JINMEN || enemyType == ENEMY_KIND_TWINS || enemyType == ENEMY_KIND_HIL || enemyType == ENEMY_KIND_NURSE)
 	{
 		// just rewriting the function entirely fixes the crash issues
 		// bit of an ugly hack though
 		EnemyFileMapping enemy = possibleEnemies[std::rand() / ((RAND_MAX + 1u) / possibleEnemies.size())];
-		PLOG(plog::info) << "Enemy kind " << enemy.kind << " fileId " << enemy.fileId;
-		sfFileLoad.fun(enemy.fileId);
+		for (int i = 0; i < enemy.fileIds.size(); i++)
+		{
+			sfFileLoad.fun(enemy.fileIds[i]);
+		}
+		PLOG(plog::info) << "Spawning enemy type: " << enemy.kind;
 		return enemy.tableAddr;
 	}
 
+	PLOG(plog::info) << "Spawning enemy type: " << enemyType;
 	return EnemyKindTableGetAddress.fun(enemyType);
 }
 
@@ -77,13 +78,10 @@ bool __cdecl GameGetItemHook(GameItem item)
 		return GameGetItem.fun(static_cast <GameItem>(newWeapon));
 	}
 
+
 	return GameGetItem.fun(item);
 }
 
-// the game references a lookup table to know what files it should load, which contains only the files for enemies normally in that room
-// but the game wont spawn enemies unless their files are loaded
-// so we just load the original files, and then also load the .bin files for every enemy
-// this is not really a memory or performance concern the game is almost 20 years old and the amount of memory needed to load it all at once is less than 40mb
 injector::hook_back<void(__cdecl*)(int, int)> GameFileLoadScene;
 void __cdecl GameFileLoadSceneHook(int scene, int stage)
 {
@@ -117,12 +115,21 @@ void __cdecl LoadFileHook(LPCSTR file, HANDLE* handle)
 		return LoadFile.fun(model, handle);
 	}
 
+
+	if (strcmp(file, ".\\data\\snap_title.bin") == 0)
+	{
+		return LoadFile.fun(".\\data\\snap_title_randomizer.bin", handle);
+	}
+
 	return LoadFile.fun(file, handle);
 }
 
 
 void Init()
 {
+
+	// 00430ac8
+	// 00430093
 
 	// seed random
 	std::srand(std::time(nullptr));
@@ -135,7 +142,7 @@ void Init()
 
 	bool bRandomEnemies = iniReader.ReadInteger("RANDOMIZER", "RandomEnemies", 1) != 0;
 	bool bRandomPlayerModels = iniReader.ReadInteger("RANDOMIZER", "RandomPlayerModel", 1) != 0;
-	bool bRandomWeapons = iniReader.ReadInteger("RANDOMIZER", "RandomWeapons", 1) != 0;
+	bool bRandomItems = iniReader.ReadInteger("RANDOMIZER", "RandomItems", 1) != 0;
 
 	bool bEnableHauntings = iniReader.ReadInteger("GAME", "RestoreHauntings", 1) != 0;
 
@@ -181,8 +188,7 @@ void Init()
 		injector::WriteMemory<char>(0x547e54, 0x90, true);
 		injector::WriteMemory<char>(0x547e55, 0x90, true);
 	}
-
-	if (bRandomWeapons)
+	if (bRandomItems)
 	{
 		pattern = hook::pattern("E8 CC EB FD FF 83 C4 08 85 C0");
 		GameGetItem.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), GameGetItemHook, true).get();

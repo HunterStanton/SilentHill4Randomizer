@@ -29,7 +29,7 @@ enum EnemyKind : unsigned char
 struct EnemyFileMapping
 {
 	EnemyKind kind;
-	unsigned int fileId;
+	std::vector<unsigned int> fileIds;
 	unsigned int tableAddr;
 };
 
@@ -65,4 +65,14 @@ enum EnemySeKind : unsigned char
 	ENEMY_SE_KIND_KILLER3,
 	ENEMY_SE_KIND_NURSE,
 	ENEMY_SE_KIND_MAX
+};
+
+static std::vector<EnemyFileMapping> possibleEnemies = {
+	{ENEMY_KIND_MUSH, {0xf000f066, 0xf000f067}, 0x00615368},
+	{ENEMY_KIND_BUZZ, {0xf000f0b9}, 0x00615378},
+	{ENEMY_KIND_JINMEN, {0xf000f071, 0xf000f11f}, 0x006153b8},
+	{ENEMY_KIND_TWINS, {0xf000f0bd}, 0x006153c8},
+	{ENEMY_KIND_HIL, {0xf000f06e}, 0x006153d8},
+	{ENEMY_KIND_HYENA, {0xf000f068}, 0x006153e8},
+	{ENEMY_KIND_KILLER, {0xf000f072, 0xf000f193}, 0x00615448}
 };
