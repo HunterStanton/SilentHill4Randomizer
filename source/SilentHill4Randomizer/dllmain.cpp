@@ -3,127 +3,41 @@
 #include <fstream>
 #include <plog/Log.h>
 #include "plog/Initializers/RollingFileInitializer.h"
-#include "sh4/en_kind.h"
-#include "sh4/game.h"
-#include "sh4/game_item.h"
-#include "sh4/game_gi_para.h"
+#include "Randomizer.h"
+#include "FileHooks.h"
+#include "sh4/game/enemy/en_kind.h"
+#include "sh4/game/gamemain/game_fileread.h"
+#include "sh4/game/gamemain/game_item.h"
+#include "sh4/game/gamemain/game_gi_para.h"
+#include "sh4/game/misc/misc_option.h"
+#include "sh4/game/misc/misc_itemicon.h"
+#include "sh4/game/misc/misc_iexplanation.h"
+#include "sh4/game/message/message_load.h"
+#include "sh4/game/message/message_handle.h"
+#include "sh4/game/objs/game_objset.h"
+#include "sh4/game/player/player.h"
+#include "sh4/game/player/player_anime_proc.h"
+#include "sh4/game/player/battle/player_weapon.h"
+#include "sh4/sys/storage/sf_fileread.h"
+#include "sh4/sys/geometry/sf_scene.h"
 
-injector::hook_back<int(__cdecl*)(int, float)> PlayerDamage;
-int __cdecl PlayerDamageHook(int unknown, float damage)
+RandomizerSettings settings = { 0 };
+
+int chosenColor = 0;
+std::vector<int> colors = {
+	((64 << 8 | 100) << 8 | 15) << 8 | 15, // blue
+	((64 << 8 | 100) << 8 | 100) << 8 | 15, // cyan
+	((64 << 8 | 100) << 8 | 15) << 8 | 100, // pink
+	((64 << 8 | 15) << 8 | 120) << 8 | 120, // yellow
+	((64 << 8 | 100) << 8 | 100) << 8 | 100, // white
+	((64 << 8 | 0) << 8 | 0) << 8 | 0, // white
+};
+
+injector::hook_back<void(__cdecl*)(int, int, int, int, int, unsigned int)> MakeBloodDrop;
+void __cdecl MakeBloodDropHook(int unk, int unk2, int unk3, int unk4, int unk5, unsigned int color)
 {
-	// randomly adds or subtracts values from damage
-	PLOG(plog::info) << "Player took damage: " << damage;
-	return PlayerDamage.fun(unknown, damage);
+	return MakeBloodDrop.fun(unk, unk2, unk3, unk4, unk5, colors[5]); //colors[std::rand() / ((RAND_MAX + 1u) / playerModels.size())]);
 }
-
-injector::hook_back<void(__cdecl*)(unsigned int)> sfFileLoad;
-void __cdecl sfFileLoadHook(unsigned int fileId)
-{
-	sfFileLoad.fun(fileId);
-	return;
-
-}
-
-injector::hook_back<unsigned int(__cdecl*)(EnemyKind)> EnemyKindTableGetAddress;
-unsigned int __cdecl EnemyKindTableGetAddressHook(EnemyKind enemyType)
-{
-
-	// shuffle all basic enemy types, no ghosts, no wall monster replacements, no boss replacements, no ghost replacements
-	if (enemyType == ENEMY_KIND_HYENA || enemyType == ENEMY_KIND_MUSH || enemyType == ENEMY_KIND_WHEEL || enemyType == ENEMY_KIND_JINMEN || enemyType == ENEMY_KIND_TWINS || enemyType == ENEMY_KIND_HIL || enemyType == ENEMY_KIND_NURSE)
-	{
-		// just rewriting the function entirely fixes the crash issues
-		// bit of an ugly hack though
-		EnemyFileMapping enemy = possibleEnemies[std::rand() / ((RAND_MAX + 1u) / possibleEnemies.size())];
-		for (int i = 0; i < enemy.fileIds.size(); i++)
-		{
-			sfFileLoad.fun(enemy.fileIds[i]);
-		}
-		PLOG(plog::info) << "Spawning enemy type: " << enemy.kind;
-		return enemy.tableAddr;
-	}
-
-	PLOG(plog::info) << "Spawning enemy type: " << enemyType;
-	return EnemyKindTableGetAddress.fun(enemyType);
-}
-
-injector::hook_back<bool(__cdecl*)(GameItem)> GameGetItem;
-bool __cdecl GameGetItemHook(GameItem item)
-{
-	// don't change the torch pickup since bad RNG could make it impossible to progress otherwise
-	if (item == ITEM_CLUB)
-	{
-		return GameGetItem.fun(item);
-	}
-
-	int newWeapon = 0;
-
-	// original item is a weapon
-	if (ITEM_FIRST_AID_KIT < item && item < ITEM_KEY_OF_LIBERATION)
-	{
-		newWeapon = ITEM_HANDGUN + (std::rand() % (ITEM_CHAIN_SAW - ITEM_HANDGUN + 1));
-		PLOG(plog::info) << "Adding weapon " << newWeapon << " to inventory, original weapon was " << item;
-		return GameGetItem.fun(static_cast <GameItem>(newWeapon));
-	}
-
-	// original item is a consumable of some kind
-	if (ITEM_EMPTY < item && item < ITEM_HANDGUN)
-	{
-		newWeapon = ITEM_SMALL_BULLET + (std::rand() % (ITEM_FIRST_AID_KIT - ITEM_SMALL_BULLET + 1));
-
-		// prevent giving the player unused/cut items
-		if (newWeapon == ITEM_RED_CHRISM) newWeapon = ITEM_FINISHER;
-		if (newWeapon == ITEM_LOADS_PRAYER) newWeapon = ITEM_SAINT_MEDALLION;
-
-		PLOG(plog::info) << "Adding consumable item " << newWeapon << " to inventory, original consumable item was " << item;
-		return GameGetItem.fun(static_cast <GameItem>(newWeapon));
-	}
-
-
-	return GameGetItem.fun(item);
-}
-
-injector::hook_back<void(__cdecl*)(int, int)> GameFileLoadScene;
-void __cdecl GameFileLoadSceneHook(int scene, int stage)
-{
-	PLOG(plog::info) << "Loaded scene " << scene << " on stage " << stage;
-
-	GameFileLoadScene.fun(scene, stage);
-	return;
-}
-
-std::vector<LPCSTR> playerModels = { ".\\data\\henry01.bin", ".\\data\\randomizer_eileen.bin", ".\\data\\randomizer_eileen_sexy.bin" };
-
-// didn't want to dig super deep in the game code so this is the basic file reading function
-injector::hook_back<void(__cdecl*)(LPCSTR, HANDLE*)> LoadFile;
-void __cdecl LoadFileHook(LPCSTR file, HANDLE* handle)
-{
-	PLOG(plog::info) << "Loading file " << file;
-
-	if (strcmp(file, ".\\data\\henry01.bin") == 0)
-	{
-
-		LPCSTR model = playerModels[std::rand() / ((RAND_MAX + 1u) / playerModels.size())];
-
-		// this needs to be done or it will always give you the last item in the player model vector, every time
-		for (int i = 0; i < 10; i++)
-		{
-			model = playerModels[std::rand() / ((RAND_MAX + 1u) / playerModels.size())];
-		}
-
-		PLOG(plog::info) << "Setting a random playermodel " << model;
-
-		return LoadFile.fun(model, handle);
-	}
-
-
-	if (strcmp(file, ".\\data\\snap_title.bin") == 0)
-	{
-		return LoadFile.fun(".\\data\\snap_title_randomizer.bin", handle);
-	}
-
-	return LoadFile.fun(file, handle);
-}
-
 
 void Init()
 {
@@ -132,92 +46,135 @@ void Init()
 	// 00430093
 
 	// seed random
-	std::srand(std::time(nullptr));
+	std::srand(std::time(0));
 
 	plog::init(plog::info, "randomizer.log");
-	PLOG(plog::info) << "Silent Hill 4 Randomizer Loaded";
-
+	PLOG(plog::info) << "Silent Hill 4 Randomizer initializing...";
 
 	CIniReader iniReader("randomizer.ini");
 
-	bool bRandomEnemies = iniReader.ReadInteger("RANDOMIZER", "RandomEnemies", 1) != 0;
-	bool bRandomPlayerModels = iniReader.ReadInteger("RANDOMIZER", "RandomPlayerModel", 1) != 0;
-	bool bRandomItems = iniReader.ReadInteger("RANDOMIZER", "RandomItems", 1) != 0;
+	unsigned int seed = iniReader.ReadInteger("RANDOMIZER", "Seed", std::time(0));
 
-	bool bEnableHauntings = iniReader.ReadInteger("GAME", "RestoreHauntings", 1) != 0;
+	settings.bInGameOptions = iniReader.ReadInteger("GAME", "EnableInGameOptions", 0) != 0;
 
-	bool bLogDamage = iniReader.ReadInteger("LOGGING", "LogDamage", 1) != 0;
+	settings.bEnableHauntings = iniReader.ReadInteger("GAME", "RestoreHauntings", 1) != 0;
+
+	settings.bFastSplash = iniReader.ReadInteger("VIDEO", "FastSplash", 1) != 0;
 
 	auto pattern = hook::pattern("E8 A3 34 00 00");
 
+	LoadSceneSets();
 
-	if (bRandomEnemies)
+	if (settings.bInGameOptions)
 	{
-		GameFileLoadScene.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), GameFileLoadSceneHook, true).get();
-
-		pattern = hook::pattern("E8 E5 FE 07 00");
-		sfFileLoad.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), sfFileLoadHook, true).get();
-
-
-		pattern = hook::pattern("E8 17 3A F4 FF");
-		EnemyKindTableGetAddress.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), EnemyKindTableGetAddressHook, true).get();
+		ApplyIngameOptionsPatches();
+	}
+	else
+	{
+		settings.bRandomEnemies = iniReader.ReadInteger("RANDOMIZER", "RandomEnemies", 1) != 0;
+		settings.bRandomPlayerModels = iniReader.ReadInteger("RANDOMIZER", "RandomPlayerModel", 1) != 0;
+		settings.bRandomItems = iniReader.ReadInteger("RANDOMIZER", "RandomItems", 1) != 0;
 	}
 
-	if (bRandomPlayerModels)
+	InstallItemHooks();
+
+	GameFileLoadScene.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), GameFileLoadSceneHook, true).get();
+
+	pattern = hook::pattern("E8 E5 FE 07 00");
+	sfFileLoad.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), sfFileLoadHook, true).get();
+
+	pattern = hook::pattern("E8 17 3A F4 FF");
+	EnemyKindTableGetAddress.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), EnemyKindTableGetAddressHook, true).get();
+
+	pattern = hook::pattern("E8 0D FE FF FF");
+	LoadFile.fun = injector::MakeCALL(pattern.count(2).get(1).get<uint32_t>(0), LoadFileHook, true).get();
+	pattern = hook::pattern("E8 42 FE FF FF");
+	LoadFile.fun = injector::MakeCALL(pattern.count(3).get(1).get<uint32_t>(0), LoadFileHook, true).get();
+
+	if (settings.bFastSplash)
 	{
-		pattern = hook::pattern("E8 0D FE FF FF");
-		LoadFile.fun = injector::MakeCALL(pattern.count(2).get(1).get<uint32_t>(0), LoadFileHook, true).get();
-		pattern = hook::pattern("E8 42 FE FF FF");
-		LoadFile.fun = injector::MakeCALL(pattern.count(3).get(1).get<uint32_t>(0), LoadFileHook, true).get();
+		// removes an fdivr instruction to shorten splash screens but not make them too short
+		injector::WriteMemory<unsigned char>(0x00518eb4, 0x90, true);
+		injector::WriteMemory<unsigned char>(0x00518eb5, 0x90, true);
+		injector::WriteMemory<unsigned char>(0x00518eb6, 0x90, true);
+		injector::WriteMemory<unsigned char>(0x00518eb7, 0x90, true);
+		injector::WriteMemory<unsigned char>(0x00518eb8, 0x90, true);
+		injector::WriteMemory<unsigned char>(0x00518eb9, 0x90, true);
 	}
 
-	if (bEnableHauntings)
+	/*
+	injector::WriteMemory<unsigned char>(0x00525bc6, 0x31, true);
+	injector::WriteMemory<unsigned char>(0x00525bc7, 0xc0, true);
+	injector::WriteMemory<unsigned char>(0x00525bc8, 0x40, true);
+	injector::WriteMemory<unsigned char>(0x00525bc9, 0x40, true);
+	
+	injector::WriteMemory<unsigned char>(0x00525c0a, 0x31, true);
+	injector::WriteMemory<unsigned char>(0x00525c0b, 0xc0, true);
+	injector::WriteMemory<unsigned char>(0x00525c0c, 0x40, true);
+	injector::WriteMemory<unsigned char>(0x00525c0d, 0x40, true);
+
+	injector::WriteMemory<unsigned char>(0x00525b88, 0x03, true);
+
+	injector::WriteMemory<unsigned char>(0x00523e23, 0x10, true);
+	*/
+
+
+	if (settings.bEnableHauntings)
 	{
 		// removes bit shifting and weird math operations that make certain "rolls" impossible in the haunting RNG
 		// probably should replace this with a pattern search instead of fixed addresses
-		injector::WriteMemory<char>(0x547e4a, 0x90, true);
-		injector::WriteMemory<char>(0x547e4b, 0x90, true);
-		injector::WriteMemory<char>(0x547e4c, 0x90, true);
-		injector::WriteMemory<char>(0x547e4d, 0x90, true);
-		injector::WriteMemory<char>(0x547e4e, 0x90, true);
-		injector::WriteMemory<char>(0x547e4f, 0x90, true);
-		injector::WriteMemory<char>(0x547e50, 0x90, true);
-		injector::WriteMemory<char>(0x547e51, 0x90, true);
-		injector::WriteMemory<char>(0x547e52, 0x90, true);
-		injector::WriteMemory<char>(0x547e53, 0x90, true);
-		injector::WriteMemory<char>(0x547e54, 0x90, true);
-		injector::WriteMemory<char>(0x547e55, 0x90, true);
-	}
-	if (bRandomItems)
-	{
-		pattern = hook::pattern("E8 CC EB FD FF 83 C4 08 85 C0");
-		GameGetItem.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), GameGetItemHook, true).get();
+		injector::MakeNOP(0x547e4a, 12);
 	}
 
-	if (bLogDamage)
-	{
-		pattern = hook::pattern("E8 DE E5 FE FF 83 C4 0C 83");
-		PlayerDamage.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), PlayerDamageHook, true).get();
-	}
+	pattern = hook::pattern("E8 DE E5 FE FF 83 C4 0C 83");
+	PlayerDamage.fun = injector::MakeCALL(pattern.count(1).get(0).get<uint32_t>(0), PlayerDamageHook, true).get();
 
-	// raises texture size limit to 2048 x 2048 in sgTextureConstruct
-	// injector::WriteMemory<char>(0x0042b358, 0x08, true);
-	// injector::WriteMemory<char>(0x0042b3e4, 0x08, true);
+	MessagePut.fun = injector::auto_pointer(0x0050b580);
+	MessageSubtitlesPut.fun = injector::auto_pointer(0x0050c2a0);
+	MessageDemoSubtitlesPut.fun = injector::auto_pointer(0x0050b1c0);
+	MessageMemoPut.fun = injector::auto_pointer(0x0050c340);
+	MessageExplanationPut.fun = injector::auto_pointer(0x0050c300);
+
+	MakeBloodDrop.fun = injector::MakeCALL(0x00430c48, MakeBloodDropHook, true).get();
+
+	sfSceneSetFogColor.fun = injector::MakeCALL(0x004d748c, sfSceneSetFogColorHook, true).get();
+	sfSceneSetFogColor.fun = injector::MakeCALL(0x004d83fc, sfSceneSetFogColorHook, true).get();
+	sfSceneSetFogColor.fun = injector::MakeCALL(0x004f13de, sfSceneSetFogColorHook, true).get();
+	sfSceneSetFogColor.fun = injector::MakeCALL(0x004f1493, sfSceneSetFogColorHook, true).get();
+	sfSceneSetFogColor.fun = injector::MakeCALL(0x004f15cf, sfSceneSetFogColorHook, true).get();
+	sfSceneSetFogColor.fun = injector::MakeCALL(0x004f1e7a, sfSceneSetFogColorHook, true).get();
+	sfSceneSetFogColor.fun = injector::MakeCALL(0x0054c343, sfSceneSetFogColorHook, true).get();
+	sfSceneSetFogColor.fun = injector::MakeCALL(0x0054c625, sfSceneSetFogColorHook, true).get();
+
+	sfSceneSetFogPower.fun = injector::MakeCALL(0x004d74be, sfSceneSetFogPowerHook, true).get();
+	sfSceneSetFogPower.fun = injector::MakeCALL(0x004d842e, sfSceneSetFogPowerHook, true).get();
+	sfSceneSetFogPower.fun = injector::MakeCALL(0x004f13f4, sfSceneSetFogPowerHook, true).get();
+	sfSceneSetFogPower.fun = injector::MakeCALL(0x004f14ab, sfSceneSetFogPowerHook, true).get();
+	sfSceneSetFogPower.fun = injector::MakeCALL(0x0054c33a, sfSceneSetFogPowerHook, true).get();
+	sfSceneSetFogPower.fun = injector::MakeCALL(0x0055e4b7, sfSceneSetFogPowerHook, true).get();
+	sfSceneSetFogPower.fun = injector::MakeCALL(0x0055e577, sfSceneSetFogPowerHook, true).get();
+	sfSceneSetFogPower.fun = injector::MakeCALL(0x0055e5ac, sfSceneSetFogPowerHook, true).get();
+	sfSceneSetFogPower.fun = injector::MakeCALL(0x0055e5e8, sfSceneSetFogPowerHook, true).get();
+
+	
+
+	PLOG(plog::info) << "Silent Hill 4 Randomizer initialized";
 }
 
 CEXP void InitializeASI()
 {
 	std::call_once(CallbackHandler::flag, []()
-		{
-			CallbackHandler::RegisterCallback(Init, hook::pattern("8B 0D ? ? ? ? 6A 00 50 51"));
-		});
+		{ CallbackHandler::RegisterCallback(Init, hook::pattern("8B 0D ? ? ? ? 6A 00 50 51")); });
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 {
 	if (reason == DLL_PROCESS_ATTACH)
 	{
-		if (!IsUALPresent()) { InitializeASI(); }
+		if (!IsUALPresent())
+		{
+			InitializeASI();
+		}
 	}
 	return TRUE;
 }

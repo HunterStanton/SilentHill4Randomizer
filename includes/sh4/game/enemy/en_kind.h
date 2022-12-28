@@ -74,5 +74,7 @@ static std::vector<EnemyFileMapping> possibleEnemies = {
 	{ENEMY_KIND_TWINS, {0xf000f0bd}, 0x006153c8},
 	{ENEMY_KIND_HIL, {0xf000f06e}, 0x006153d8},
 	{ENEMY_KIND_HYENA, {0xf000f068}, 0x006153e8},
-	{ENEMY_KIND_KILLER, {0xf000f072, 0xf000f193}, 0x00615448}
-};
+	{ENEMY_KIND_KILLER, {0xf000f072, 0xf000f193}, 0x00615448} };
+
+extern injector::hook_back<unsigned int(__cdecl*)(EnemyKind)> EnemyKindTableGetAddress;
+unsigned int __cdecl EnemyKindTableGetAddressHook(EnemyKind enemyType);

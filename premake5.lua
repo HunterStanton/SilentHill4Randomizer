@@ -24,7 +24,7 @@ workspace "SilentHill4Randomizer"
    files { "source/%{prj.name}/*.cpp" }
    files { "Resources/*.rc" }
    files { "external/hooking/Hooking.Patterns.h", "external/hooking/Hooking.Patterns.cpp" }
-   files { "includes/stdafx.h", "includes/stdafx.cpp" }
+   files { "includes/stdafx.h", "includes/stdafx.cpp", "includes/sh4/*.h" }
    includedirs { "includes" }
    includedirs { "external/hooking" }
    includedirs { "external/injector/include" }

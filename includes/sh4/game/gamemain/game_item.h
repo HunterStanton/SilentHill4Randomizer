@@ -179,8 +179,10 @@ enum GameItem : unsigned char
 	ITEM_KILLER_PIPE,
 	ITEM_KILLER_GUN1,
 	ITEM_KILLER_GUN2,
-	ITEM_KIND_MAX
+	ITEM_KIND_MAX,
+	ITEM_CUSTOM_WEAPON
 };
+
 
 enum GameItemAttribute : unsigned char
 {
@@ -192,3 +194,68 @@ enum GameItemAttribute : unsigned char
 	ITEM_ATTR_KEY,
 	ITEM_ATTR_MEMO
 };
+
+enum GameItemResult : int
+{
+	ITEM_RESULT_NONE,
+	ITEM_RESULT_USE,
+	ITEM_RESULT_KEY,
+	ITEM_RESULT_ATTACK,
+	ITEM_RESULT_WEAPONCHG,
+	ITEM_RESULT_EILEENS_WEAPON
+};
+
+struct ItemPossession
+{
+	float durability;
+	unsigned short num;
+	GameItem kind;
+	char work;
+};
+
+struct GameItemData
+{
+	ItemPossession possession[10];
+	ItemPossession box[136];
+	unsigned short box_max;
+	unsigned char handgun_ammo;
+	unsigned char weapon_kind;
+	char is_saint_medallion_equiped;
+	char pad[3];
+	unsigned char flag_tbl[136];
+};
+
+void InstallItemHooks();
+
+extern injector::hook_back<bool(__cdecl*)(GameItem)> GameItemGet;
+bool __cdecl GameItemGetHook(GameItem item);
+
+/// <summary>
+/// Returns the item's attribute
+/// </summary>
+extern injector::hook_back<GameItemAttribute(__cdecl*)(GameItem)> GameItemGetAttr;
+GameItemAttribute __cdecl GameItemGetAttrHook(GameItem item);
+
+/// <summary>
+/// Returns whether or not the item is an Eileen weapon
+/// </summary>
+extern injector::hook_back<int(__cdecl*)(GameItem)> GameItemIsEileenWeapon;
+int __cdecl GameItemIsEileenWeaponHook(GameItem item);
+
+/// <summary>
+/// Called when the item is used from the item menu
+/// </summary>
+extern injector::hook_back<GameItemResult(__cdecl*)(int)> GameItemUseItem;
+GameItemResult __cdecl GameItemUseItemHook(int num);
+
+/// <summary>
+/// Returns whether or not the item is a weapon
+/// </summary>
+extern injector::hook_back<int(__cdecl*)(GameItem)> GameItemIsWeapon;
+int __cdecl GameItemIsWeaponHook(GameItem item);
+
+/// <summary>
+/// Returns whether or not the item should be equippable
+/// </summary>
+extern injector::hook_back<int(__cdecl*)(int)> GameItemWeaponEquip;
+int __cdecl GameItemWeaponEquipHook(int num);
