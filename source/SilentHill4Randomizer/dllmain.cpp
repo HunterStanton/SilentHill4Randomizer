@@ -23,18 +23,19 @@
 #include "sh4/game/player/player.h"
 #include "sh4/game/player/player_anime_proc.h"
 #include "sh4/game/player/player_another_ui.h"
+#include "sh4/game/player/player_sound.h"
 #include "sh4/game/player/battle/player_weapon.h"
 #include "sh4/game/player/battle/player_battle.h"
 #include "sh4/game/player/battle/player_battle_general.h"
 #include "sh4/sys/apps/sf_memorystack.h"
 #include "sh4/sys/storage/sf_fileread.h"
 #include "sh4/sys/geometry/sf_scene.h"
+#include "sh4/sys/sound/sf_sound.h"
 #include "sh4/sys/env/sf_env.h"
 
 // global vars
 RandomizerSettings settings = { 0 };
 _GAME_WORK* gameW;
-PlayerUI* playerUI;
 
 void Init()
 {
@@ -63,7 +64,6 @@ void Init()
 	InitializeRandomness();
 
 	gameW = injector::auto_pointer(0x00fd5a60);
-	playerUI = injector::auto_pointer(0x010a1a00);
 
 	InitializeSgBoneFunctions();
 	InitializeSfCharacterFunctions();
@@ -84,6 +84,9 @@ void Init()
 	InitializeGameGIParaFunctions();
 	InitializeSfMemoryFunctions();
 	InitializePlayerBattleGeneralFunctions();
+	InitializePlayerSoundFunctions();
+	InitializePlayerAnotherUIFunctions();
+	InitializeSfSoundFunctions();
 
 	LoadSceneSets();
 

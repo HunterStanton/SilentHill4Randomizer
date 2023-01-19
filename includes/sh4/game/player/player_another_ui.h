@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 struct PlayerUI
 {
 	float move;
@@ -35,3 +33,6 @@ struct PlayerUI
 };
 
 extern PlayerUI* playerUI;
+extern int* motion_stop;
+
+void InitializePlayerAnotherUIFunctions();
