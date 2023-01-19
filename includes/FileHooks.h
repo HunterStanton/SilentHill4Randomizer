@@ -2,7 +2,13 @@
 
 #include "sh4/game/misc/misc_option.h"
 
-extern std::vector<LPCSTR> playerModels;
+
+struct PlayerModel {
+	LPCSTR filename;
+	LPCSTR cutsceneFileName;
+};
+
+extern std::vector<PlayerModel> playerModels;
 
 extern injector::hook_back<void(__cdecl*)(LPCSTR, HANDLE*)> LoadFile;
 void __cdecl LoadFileHook(LPCSTR file, HANDLE* handle);

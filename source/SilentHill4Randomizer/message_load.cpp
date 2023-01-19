@@ -2,6 +2,12 @@
 #include "sh4/game/message/message_load.h"
 #include <plog/Log.h>
 
+// color codes
+// \x01\xFF blue
+// \x01\XFE red
+// \x01\xFD green
+// \x01\x20 white
+
 // new options menu text
 
 const char* randomEnemies = convertMessage("Random Enemies");
@@ -15,18 +21,30 @@ const char* randomItemsExpl = convertMessage("Randomizes the weapons and consuma
 const char* randomModelsExpl = convertMessage("Randomizes the player model.");
 const char* randomDamageExpl = convertMessage("Randomizes the amount of damage\r\nHenry and Eileen take.\x01\xFE Only recommended\r\nfor experienced players.\x01\x20");
 const char* extraContentExpl = convertMessage("Enables extra items/weapons in the loot pool.\r\nOnly effective if \"Random Items\" is enabled.");
-const char* theFogApproachesExpl = convertMessage("Adds thick white fog everywhere.");
+const char* theFogApproachesExpl = convertMessage("Feel like you are in downtown Silent Hill\r\neverywhere you go. Adds thick white fog\r\neverywhere.");
 
 // custom weapons
 
-const char* goldPipe = convertMessage("Golden Pipe");
-const char* goldPipeDescription = convertMessage("\x01\xFFGolden Pipe [weapon]\x01\x20\r\nA pipe made of solid gold. It feels like\r\nit would do some serious damage.");
+const char* greenHyperSpray = convertMessage("\x01\x20Hyper Spray\x01\x20");
+const char* greenHyperSprayDescription = convertMessage("\x01\xFDHyper Spray \x01\xFF[weapon]\x01\x20\r\nSuspicious spray can.\r\nEffect unknown.");
+
+const char* goldPipe = convertMessage("Gold Pipe");
+const char* goldPipeDescription = convertMessage("\x01\xFFGold Pipe [weapon]\x01\x20\r\nIt looks snazzy, but it's not strong\r\nat all. Well, maybe I can sell it.");
+
+const char* silverPipe = convertMessage("Silver Pipe");
+const char* silverPipeDescription = convertMessage("\x01\xFFSilver Pipe [weapon]\x01\x20\r\nHow gorgeous! No stronger than the\r\nsteel pipe, though. Good against\r\nvampires and werewolves.");
+
+const char* lordsPrayer = convertMessage("Lord's Prayer");
+const char* lordsPrayerDescription = convertMessage("\x01\xFFLord's Prayer [Eileen consumable]\x01\x20\r\nA prayer written in an ancient language.\r\nLifts Eileen's curse slightly.");
+
+const char* redChrism = convertMessage("Red Chrism");
+const char* redChrismDescription = convertMessage("\x01\xFFRed Chrism [Eileen consumable]\x01\x20\r\nA strange red liquid inside an ancient-looking bottle.\r\nHeavily lifts Eileen's curse.");
 
 // text replacements
 
 const char* newStartMessage = convertMessage("Some parts of this game may be\r\nconsidered violent or cruel.\r\n\r\nSilent Hill 4 Randomizer is active.");
 
-std::map<int, const char *> textMap = {
+std::map<int, const char*> textMap = {
 	{ 2000, randomEnemies},
 	{ 2001, randomItems },
 	{ 2002, randomModels},
@@ -39,8 +57,16 @@ std::map<int, const char *> textMap = {
 	{ 2103, extraContentExpl},
 	{ 2104, randomDamageExpl },
 	{ 2105, theFogApproachesExpl },
-	{ 2020, goldPipe},
-	{ 2021, goldPipeDescription },
+	{ 2020, greenHyperSpray},
+	{ 2021, greenHyperSprayDescription },
+	{ 2022, goldPipe},
+	{ 2023, goldPipeDescription },
+	{ 2024, silverPipe },
+	{ 2025, silverPipeDescription },
+	{ 2026, lordsPrayer },
+	{ 2027, lordsPrayerDescription },
+	{ 2028, redChrism },
+	{ 2029, redChrismDescription },
 };
 
 /// <summary>

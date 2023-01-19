@@ -29,6 +29,12 @@ struct WeaponParam
 	float anim_speed;
 };
 
+struct SidestepAnimEntry
+{
+	int left;
+	int right;
+};
+
 enum BattleAttackKind : int
 {
 	BAK_NOTHING,
@@ -155,6 +161,11 @@ struct AttackTableEntry {
 	BattleAttackKind strong;
 };
 
+extern void InitializePlayerWeaponFunctions();
+
+extern injector::hook_back<float(__cdecl*)(int, int)> PlayerWeaponGetStartTime;
+extern injector::hook_back<float(__cdecl*)(int, int)> PlayerWeaponGetEndTime;
+
 extern std::vector<WeaponTimeTableEntry> _gun;
 extern std::vector<WeaponTimeTableEntry> _steelpipe;
 extern std::vector<WeaponTimeTableEntry> _cutter;
@@ -172,3 +183,5 @@ extern std::vector<WeaponTableEntry> wp_table;
 extern std::vector<WeaponParam> wp_param;
 
 extern std::vector<AttackTableEntry> attack_tbl;
+
+extern std::vector<SidestepAnimEntry> sidestep_anim;

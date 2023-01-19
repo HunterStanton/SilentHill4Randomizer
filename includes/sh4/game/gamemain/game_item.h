@@ -180,7 +180,10 @@ enum GameItem : unsigned char
 	ITEM_KILLER_GUN1,
 	ITEM_KILLER_GUN2,
 	ITEM_KIND_MAX,
-	ITEM_CUSTOM_WEAPON
+	ITEM_GREEN_HYPER_SPRAY,
+	ITEM_GOLD_PIPE,
+	ITEM_SILVER_PIPE,
+	ITEM_KIND_CUSTOM_MAX
 };
 
 
@@ -224,6 +227,11 @@ struct GameItemData
 	char pad[3];
 	unsigned char flag_tbl[136];
 };
+
+extern std::vector<GameItem> possibleWeapons;
+extern std::vector<GameItem> possibleWeaponsWithExtra;
+extern std::unordered_map<GameItem, GameItem> weaponSwaps;
+extern std::unordered_map<GameItem, GameItem> weaponSwapsWithExtra;
 
 void InstallItemHooks();
 

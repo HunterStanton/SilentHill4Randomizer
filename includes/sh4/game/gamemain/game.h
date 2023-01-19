@@ -1,7 +1,9 @@
 #pragma once
 
-/*
-struct GameWork
+#include "sh4/game/gamemain/game_fileread.h"
+#include "sh4/game/player/player.h"
+
+struct _GAME_WORK
 {
 	int init_at_cold[1];
 	int logo_displayed;
@@ -15,7 +17,7 @@ struct GameWork
 	int level;
 	int init_at_game[1];
 	void* game_memory_top;
-	int stage;
+	GameStage stage;
 	int scene;
 	int prev_scene;
 	int prev_stage;
@@ -30,7 +32,9 @@ struct GameWork
 	float game_view_angle;
 	float game_view_angle_back;
 	float map_offset[4];
-	void* player;
+	int unk;
+	float unk2[4];
+	_PLAYER_WORK* player;
 	int control;
 	int player_pos;
 	unsigned int next_flags;
@@ -75,4 +79,6 @@ struct GameWork
 	int open_door_dn;
 	int close_door_se_disable;
 	int close_door_se_reserve;
-};*/
+};
+
+extern _GAME_WORK *gameW;

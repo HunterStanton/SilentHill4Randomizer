@@ -24,3 +24,14 @@ int __cdecl PlayerDamageHook(int num, float damage)
 	}
 	return PlayerDamage.fun(num, damage);
 }
+
+void InitializePlayerFunctions()
+{
+	PlayerDamage.fun = injector::MakeCALL(0x00450a77, PlayerDamageHook, true).get();
+	PlayerDamage.fun = injector::MakeCALL(0x005391c4, PlayerDamageHook, true).get();
+	PlayerDamage.fun = injector::MakeCALL(0x005391eb, PlayerDamageHook, true).get();
+	PlayerDamage.fun = injector::MakeCALL(0x005392ab, PlayerDamageHook, true).get();
+	PlayerDamage.fun = injector::MakeCALL(0x0053e6e8, PlayerDamageHook, true).get();
+	PlayerDamage.fun = injector::MakeCALL(0x0053eacd, PlayerDamageHook, true).get();
+	PlayerDamage.fun = injector::MakeCALL(0x0053ee0e, PlayerDamageHook, true).get();
+}

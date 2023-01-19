@@ -14,6 +14,7 @@
 #include <set>
 #include <map>
 #include <iomanip>
+#include <random>
 #include "IniReader.h"
 #include "injector\injector.hpp"
 #include "injector\calling.hpp"

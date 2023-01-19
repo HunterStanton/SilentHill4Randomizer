@@ -24,3 +24,5 @@ extern injector::hook_back<void(__cdecl*)(int, int)> MessageMemoPut;
 /// Shows a message and requires pressing the Use button/Mouse click to dismiss
 /// </summary>
 extern injector::hook_back<void(__cdecl*)(int, int)> MessageExplanationPut;
+
+void InitializeMessageHandleFunctions();
