@@ -3,6 +3,14 @@
 #include "sh4/game/gamemain/game_fileread.h"
 #include "sh4/game/player/player.h"
 
+enum ActionLevel : int
+{
+	NONE,
+	EASY,
+	NORMAL,
+	HARD
+};
+
 struct _GAME_WORK
 {
 	int init_at_cold[1];
@@ -14,7 +22,7 @@ struct _GAME_WORK
 	int continue_play;
 	int game_overed;
 	int risky_continue_count;
-	int level;
+	ActionLevel level;
 	int init_at_game[1];
 	void* game_memory_top;
 	GameStage stage;
@@ -81,4 +89,4 @@ struct _GAME_WORK
 	int close_door_se_reserve;
 };
 
-extern _GAME_WORK *gameW;
+extern _GAME_WORK* gameW;

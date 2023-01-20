@@ -19,7 +19,7 @@ const char* theFogApproaches = convertMessage("The Fog Approaches");
 const char* randomEnemiesExpl = convertMessage("Randomizes the enemies encountered\r\nin each room. Can cause crashes, so\r\ndon't forget to save often.");
 const char* randomItemsExpl = convertMessage("Randomizes the weapons and consumable items\r\npicked up. Does not randomize quest\r\nitems or the Torch to prevent softlocks.");
 const char* randomModelsExpl = convertMessage("Randomizes the player model.");
-const char* randomDamageExpl = convertMessage("Randomizes the amount of damage\r\nHenry and Eileen take.\x01\xFE Only recommended\r\nfor experienced players.\x01\x20");
+const char* randomDamageExpl = convertMessage("Randomly adds extra damage on top\r\nof all damage received.\x01\xFE Only recommended\r\nfor experienced players.\x01\x20");
 const char* extraContentExpl = convertMessage("Enables extra items/weapons in the loot pool.\r\nOnly effective if \"Random Items\" is enabled.");
 const char* theFogApproachesExpl = convertMessage("Feel like you are in downtown Silent Hill\r\neverywhere you go. Adds thick white fog\r\neverywhere.");
 

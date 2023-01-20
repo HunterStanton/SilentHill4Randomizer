@@ -38,6 +38,7 @@ void __cdecl set_attack_seHook(int unk, _PLAYER_WORK* pWork)
 			__asm {
 				mov eax, pWork;
 			}
+
 			se_call_swing.fun(0x7);
 			return;
 		}

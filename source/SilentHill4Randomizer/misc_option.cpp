@@ -164,6 +164,9 @@ void ApplyIngameOptionsPatches()
 	injector::MakeNOP(0x0052671f, 5, true);
 	injector::MakeNOP(0x005267e1, 5, true);
 
+	// move explanation text closer to the bottom of the screen
+	injector::WriteMemory<int>(0x0052664f, 370, true);
+
 
 
 	miscOptionGetPtr.fun = injector::auto_pointer(0x005230c0);
