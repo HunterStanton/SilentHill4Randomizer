@@ -6,11 +6,14 @@
 #include "Randomizer.h"
 #include "FileHooks.h"
 #include "sh4/game/enemy/en_kind.h"
+#include "sh4/game/gamemain/camera/game_camera_another_engine.h"
 #include "sh4/game/gamemain/game.h"
 #include "sh4/game/gamemain/game_demo.h"
 #include "sh4/game/gamemain/game_fileread.h"
 #include "sh4/game/gamemain/game_item.h"
 #include "sh4/game/gamemain/game_gi_para.h"
+#include "sh4/game/gamemain/game_scenelink.h"
+#include "sh4/game/gamemain/save_data.h"
 #include "sh4/game/effect/particle/spray.h"
 #include "sh4/game/misc/misc_option.h"
 #include "sh4/game/misc/misc_itemicon.h"
@@ -61,8 +64,6 @@ void Init()
 
 	settings.bFogApproaches = iniReader.ReadInteger("GAME", "FogApproaches", 0) != 0;
 
-	InitializeRandomness();
-
 	gameW = injector::auto_pointer(0x00fd5a60);
 
 	InitializeSgBoneFunctions();
@@ -87,6 +88,13 @@ void Init()
 	InitializePlayerSoundFunctions();
 	InitializePlayerAnotherUIFunctions();
 	InitializeSfSoundFunctions();
+	InitializeGameSceneLinkFunctions();
+	InitializeSaveDataFunctions();
+	InitializeGameCameraFunctions();
+
+	InitializeRandomness();
+
+
 
 	LoadSceneSets();
 

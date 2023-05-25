@@ -24,6 +24,7 @@ std::unordered_map<std::string, LPCSTR> replacementFiles = {
 	{".\\data\\item_l.bin", ".\\data\\randomizer_item_l.bin"},
 	{".\\data\\wp_model.bin", ".\\data\\randomizer_wp_model.bin"},
 	{".\\data\\system_load.bin", ".\\data\\randomizer_system_load.bin"},
+	{".\\data\\cynhk.bin", ".\\data\\henhk.bin"},
 };
 
 PlayerModel currentPlayerModel = playerModels[0];

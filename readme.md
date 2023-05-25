@@ -8,12 +8,13 @@ This is intended for use with the GOG re-release of the game. Support for the ol
 
 * Randomized enemy spawns - you never know what is going to be in the next room
 * Randomized weapon/consumable item pickups
-* Randomized player model - play as Henry, early Henry, Eileen, or Nurse Eileen, with more coming soon
+* Randomized player model - play as Henry, early Henry, Eileen, or Nurse Eileen
+* Randomized doors - certain areas now have doors randomized to destroy your muscle memory
 * Randomized damage for those who like a challenge
 * Deterministic randomness with support for setting a custom seed, so you can share seeds and experience the same randomized version of Silent Hill 4 every time for speedrunning or competition purposes
 * New items in the random loot pool from previous Silent Hill games as well as items cut from Silent Hill 4
 * Restores the "cut" hauntings from the PS2 version
-* Easy configuration via an .ini file or the "Extra Options" menu which now contains all the randomizer settings (and they save to your save file!)
+* Easy configuration via an .ini file or the in-game "Extra Options" menu which now contains all the randomizer settings (and they save to your save file!)
 
 ## New Content
 
@@ -29,11 +30,19 @@ The randomizer adds new content *if* "Extra Content" and "Random Items" are both
 
 * Red Chrism (cut from Silent Hill 4)
 
+## Crowd Control
+
+The Silent Hill 4 Randomizer includes Twitch CrowdControl support. It is recommended you disable all randomizer features when using CrowdControl to avoid potential issues.
+
 ## Installation
 
 Use the [Ultimate ASI Loader](https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases) (32-bit version as Silent Hill 4 is a 32-bit game), rename the DLL to dsound.dll, then extract the contents of the .7z into the Silent Hill 4 game directory. You should end up with a /scripts/ folder and a couple new .bin files inside /data/.
 
-If you are only interested in restoring the hauntings, disable all the randomizer settings in the .ini file, but ensure that `RestoreHauntings` is set to 1.
+If you are only interested in restoring the hauntings, disable all the randomizer settings in the .ini file, but ensure that `RestoreHauntings` is set to 1 or use Steam006's Silent Hill 4 fix which now includes the hauntings fix.
+
+##### Performance Note
+
+The randomizer raises the maximum amount of memory that can be allocated in a room from roughly 67MB to roughly 134MB, meaning the system requirements are slightly higher than the vanilla game. You may run into out-of-memory crashes on minspec systems or virtual machines with 512MB of RAM or less.
 
 ## Demo
 
@@ -58,8 +67,6 @@ If you are only interested in restoring the hauntings, disable all the randomize
 - Additional blood colors for the blood color setting
 
 ##### Potential future additions, if determined to be feasible
-
-* Randomized doors (within reason)
 
 * Randomized ghost models
 

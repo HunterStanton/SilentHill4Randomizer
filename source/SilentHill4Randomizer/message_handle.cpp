@@ -13,6 +13,8 @@ injector::hook_back<void(__cdecl*)(int, int)> MessageMemoPut;
 
 injector::hook_back<void(__cdecl*)(int, int)> MessageExplanationPut;
 
+injector::hook_back<void(__cdecl*)(unsigned short*, int, int)> sfMessagePrint;
+
 void InitializeMessageHandleFunctions()
 {
 	MessagePut.fun = injector::auto_pointer(0x0050b580);
@@ -20,4 +22,5 @@ void InitializeMessageHandleFunctions()
 	MessageDemoSubtitlesPut.fun = injector::auto_pointer(0x0050b1c0);
 	MessageMemoPut.fun = injector::auto_pointer(0x0050c340);
 	MessageExplanationPut.fun = injector::auto_pointer(0x0050c300);
+	sfMessagePrint.fun = injector::auto_pointer(0x00559e70);
 }

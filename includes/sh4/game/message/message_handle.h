@@ -25,4 +25,6 @@ extern injector::hook_back<void(__cdecl*)(int, int)> MessageMemoPut;
 /// </summary>
 extern injector::hook_back<void(__cdecl*)(int, int)> MessageExplanationPut;
 
+extern injector::hook_back<void(__cdecl*)(unsigned short*, int, int)> sfMessagePrint;
+
 void InitializeMessageHandleFunctions();
