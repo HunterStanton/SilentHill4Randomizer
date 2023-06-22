@@ -32,4 +32,6 @@ enum EntryTypes : short
 	Unknown16 = 27
 };
 
+// loads the scene sets which contain information about the item/enemy placements, interactables, cutscene triggers, and more
+// this is currently unused by the randomizer, but if you want to play around with this, it will still load the scene sets from disk
 void LoadSceneSets();

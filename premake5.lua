@@ -5,7 +5,7 @@ workspace "SilentHill4Randomizer"
    location "build"
    objdir ("build/obj")
    buildlog ("build/log/%{prj.name}.log")
-   buildoptions {"-std:c++latest"}
+   buildoptions {"-std:c++latest", "/MP"}
    
    kind "SharedLib"
    language "C++"
@@ -31,6 +31,7 @@ workspace "SilentHill4Randomizer"
    includedirs { "external/inireader" }
    includedirs { "external/spdlog/include" }
    includedirs { "external/filewatch" }
+   
    local dxsdk = os.getenv "DXSDK_DIR"
    if dxsdk then
       includedirs { dxsdk .. "/include" }
@@ -76,4 +77,4 @@ workspace "SilentHill4Randomizer"
       optimize "On"
 
 project "SilentHill4Randomizer"
-   setpaths("C:/Program Files (x86)/Konami/Silent Hill 4/", "Silent Hill 4.exe")
+   setpaths("C:/Program Files (x86)/GOG Galaxy/Games/Silent Hill 4/", "Silent Hill 4.exe")

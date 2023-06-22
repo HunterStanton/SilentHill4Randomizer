@@ -69,11 +69,7 @@ std::map<int, const char*> textMap = {
 	{ 2029, redChrismDescription },
 };
 
-/// <summary>
-/// Encodes a string of text into the SH4 encoded text format.
-/// </summary>
-/// <param name="text">The text to encode</param>
-/// <returns>The encoded text</returns>
+
 char* convertMessage(const char* text)
 {
 	int len = strlen(text);
@@ -83,6 +79,7 @@ char* convertMessage(const char* text)
 	encodedString[0] = 0x00;
 	encodedString[1] = 0x80;
 
+	// TODO: Fix the issue that can occur where a garbage character might appear at the end of the string
 	for (int i = 0; i < strlen(text); i++)
 	{
 		if (text[i] == 0x20)
@@ -127,6 +124,9 @@ char* convertMessage(const char* text)
 injector::hook_back<unsigned short* (__cdecl*)(int, int)> MessageAddress;
 unsigned short* MessageAddressHook(int packid, int num)
 {
+	// TODO: Support localization so custom text can be added for more than just English
+	// As of now changing the language of SH4 will still show all the custom text in English
+
 	// splash screen text
 	if (packid == 0 && num == 0xc5)
 	{

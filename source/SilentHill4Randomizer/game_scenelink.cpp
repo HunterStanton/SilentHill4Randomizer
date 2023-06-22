@@ -5,10 +5,8 @@
 DoorLinkTableEntry* rl_connection_data;
 DoorLinkTableEntry* sb_connection_data;
 
-// bathroom, bedroom, utility room
-// walter room is not included
-std::vector<char> rl_possible_destinations = {
-	2,3,4
+std::vector<RLPossibleDestinations> rl_possible_destinations = {
+	BATHROOM, BEDROOM, UTILITY_ROOM
 };
 
 

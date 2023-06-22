@@ -35,7 +35,7 @@ void InitializeRandomness()
 		item.second = possibleWeaponsWithExtra.front();
 		possibleWeaponsWithExtra.erase(possibleWeaponsWithExtra.begin());
 	}
-
+	/*
 	// shuffle apartment rooms
 	std::shuffle(rl_possible_destinations.begin(), rl_possible_destinations.end(), mainRng);
 	for (int i = 0; i < rl_possible_destinations.size(); i++)
@@ -56,7 +56,7 @@ void InitializeRandomness()
 			}
 		}
 	}
-
+	*/
 
 	// roll random player model
 

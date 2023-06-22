@@ -6,7 +6,7 @@
 #include <plog/Log.h>
 #include <stdio.h>
 
-
+// printable names for the games stages, based on the names from the enum
 std::vector<std::string> stageNames =
 {
 	"GAME_STAGE_DUMMY",

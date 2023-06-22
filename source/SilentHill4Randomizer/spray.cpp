@@ -17,6 +17,7 @@ int is_spraying_hyperspray = 0;
 void SplayParticle_GeneratePosSpdSetHook(sfObj* obj, Position* pos, Position* speed)
 {
 	// recolor the spray particles if Hyper Spray is being used
+	// TODO: fix this enormous hack and give the Hyperspray its own unique sfObj
 	auto data = SupportParticle_CmnData.fun(obj);
 	if (is_spraying_hyperspray)
 	{

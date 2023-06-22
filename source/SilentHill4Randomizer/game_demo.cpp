@@ -7,11 +7,13 @@ injector::hook_back<DemoCharaListEntry* (__cdecl*)(DemoCharaListEntry*, int)> De
 
 DemoCharaListEntry* demo_chara_list;
 
+// gets the 3D model, texture, etc. for a character in a cutscene (referred to as a "demo" by the game)
 DemoCharaListEntry* __cdecl DemoGetCharacterFileInfoHook(DemoCharaListEntry* entry, int chara_id)
 {
 	DemoCharaListEntry* retEntry = DemoGetCharacterFileInfo.fun(entry, chara_id);
 	return retEntry;
 }
+
 void InitializeGameDemoFunctions()
 {
 	demo_chara_list = injector::auto_pointer(0x0062ced8);

@@ -3,6 +3,7 @@
 #include "sh4/game/gamemain/save_data.h"
 #include "sh4/game/message/message_load.h"
 #include "sh4/game/message/message_handle.h"
+#include "sh4/sys/apps/sf_step.h"
 #include <plog/Log.h>
 
 injector::hook_back<int(__cdecl*)(int, int, int)> sfMcLoad;
@@ -47,9 +48,14 @@ void print_load_stat_sHook(int port, int cur, int disp)
 	{
 		if (perSaveSettings[cur].seed != 0)
 		{
-			std::string formattedString = std::format("Seed: {0}", perSaveSettings[cur].seed);
-			seedMsg = convertMessage(formattedString.c_str());
-			sfMessagePrint.fun((unsigned short*)seedMsg, 0x12a, 0x152);
+			if (sfStepGet.fun() < 0x65)
+			{
+				std::string formattedString = std::format("Seed: {0}", perSaveSettings[cur].seed);
+				seedMsg = convertMessage(formattedString.c_str());
+				sfMessagePrint.fun((unsigned short*)seedMsg, 0x12a, 0x152);
+				PLOG(plog::info) << "Printing print " << cur << " " << disp;
+			}
+
 		}
 	}
 	return;

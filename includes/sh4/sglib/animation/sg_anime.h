@@ -33,4 +33,3 @@ struct sgAnime {
 
 extern void InitializeSgAnimeFunctions();
 extern injector::hook_back<float(__cdecl*)(sgAnime*)> sgAnimeCurrentFloatFrame;
-extern injector::hook_back<int(__cdecl*)(sgAnmData*)> sgAnmDataIsLoop;

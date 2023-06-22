@@ -5,6 +5,7 @@
 #include "sh4/game/misc/misc_option.h"
 #include <plog/Log.h>
 
+
 const std::vector<EnemyFileMapping> possibleEnemies = {
 	{ENEMY_KIND_MUSH, {0xf000f066, 0xf000f067}, 0x00615368},
 	{ENEMY_KIND_BUZZ, {0xf000f0b9}, 0x00615378},

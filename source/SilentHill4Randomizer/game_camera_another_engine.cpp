@@ -19,7 +19,7 @@ void __cdecl CameraEngine_SetCameraPositionHook(Position* pos, unsigned int Cont
 
 void InitializeGameCameraFunctions()
 {
-	CameraEngine_SetCameraPosition.fun = injector::MakeCALL(0x0050355e, CameraEngine_SetCameraPositionHook, true).get();
-	CameraEngine_SetCameraPosition.fun = injector::MakeCALL(0x005036c2, CameraEngine_SetCameraPositionHook, true).get();
-	CameraEngine_SetCameraPosition.fun = injector::MakeCALL(0x005036db, CameraEngine_SetCameraPositionHook, true).get();
+	//CameraEngine_SetCameraPosition.fun = injector::MakeCALL(0x0050355e, CameraEngine_SetCameraPositionHook, true).get();
+	//CameraEngine_SetCameraPosition.fun = injector::MakeCALL(0x005036c2, CameraEngine_SetCameraPositionHook, true).get();
+	//CameraEngine_SetCameraPosition.fun = injector::MakeCALL(0x005036db, CameraEngine_SetCameraPositionHook, true).get();
 }

@@ -5,6 +5,7 @@
 #include "plog/Initializers/RollingFileInitializer.h"
 #include "Randomizer.h"
 #include "FileHooks.h"
+#include "GameLoop.h"
 #include "sh4/game/enemy/en_kind.h"
 #include "sh4/game/gamemain/camera/game_camera_another_engine.h"
 #include "sh4/game/gamemain/game.h"
@@ -31,6 +32,7 @@
 #include "sh4/game/player/battle/player_battle.h"
 #include "sh4/game/player/battle/player_battle_general.h"
 #include "sh4/sys/apps/sf_memorystack.h"
+#include "sh4/sys/apps/sf_step.h"
 #include "sh4/sys/storage/sf_fileread.h"
 #include "sh4/sys/geometry/sf_scene.h"
 #include "sh4/sys/sound/sf_sound.h"
@@ -64,6 +66,8 @@ void Init()
 
 	settings.bFogApproaches = iniReader.ReadInteger("GAME", "FogApproaches", 0) != 0;
 
+
+
 	gameW = injector::auto_pointer(0x00fd5a60);
 
 	InitializeSgBoneFunctions();
@@ -88,10 +92,11 @@ void Init()
 	InitializePlayerSoundFunctions();
 	InitializePlayerAnotherUIFunctions();
 	InitializeSfSoundFunctions();
+	InitializeSfStepFunctions();
 	InitializeGameSceneLinkFunctions();
 	InitializeSaveDataFunctions();
 	InitializeGameCameraFunctions();
-
+	InitializeGameLoopFunction();
 	InitializeRandomness();
 
 
@@ -136,7 +141,6 @@ void Init()
 		// probably should replace this with a pattern search instead of fixed addresses
 		injector::MakeNOP(0x547e4a, 12);
 	}
-
 	PLOG(plog::info) << "Silent Hill 4 Randomizer initialized";
 }
 
