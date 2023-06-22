@@ -2,7 +2,7 @@
 
 A randomizer for Silent Hill 4: The Room, for the *GOG version* of the game. The randomizer offers several features to change up the gameplay of Silent Hill 4 to create brand new gameplay scenarios and challenges that weren't possible in the original game. It also has an option for restoring the "cut" hauntings from the PS2 version of the game.
 
-This is intended for use with the GOG re-release of the game. Support for the older retail version is planned.
+This is intended for use with the GOG re-release of the game. Support for the older retail version is planned but not yet implemented.
 
 ## Features
 
@@ -30,15 +30,11 @@ The randomizer adds new content *if* "Extra Content" and "Random Items" are both
 
 * Red Chrism (cut from Silent Hill 4)
 
-## Crowd Control
-
-The Silent Hill 4 Randomizer includes Twitch CrowdControl support. It is recommended you disable all randomizer features when using CrowdControl to avoid potential issues.
-
 ## Installation
 
-Use the [Ultimate ASI Loader](https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases) (32-bit version as Silent Hill 4 is a 32-bit game), rename the DLL to dsound.dll, then extract the contents of the .7z into the Silent Hill 4 game directory. You should end up with a /scripts/ folder and a couple new .bin files inside /data/.
+Use the [Ultimate ASI Loader](https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases) (32-bit version as Silent Hill 4 is a 32-bit game), rename the DLL to dsound.dll, then extract the contents of the [latest release](https://github.com/HunterStanton/SilentHill4Randomizer/releases) into the Silent Hill 4 game directory. You should end up with a /scripts/ folder and a couple new .bin files inside /data/.
 
-If you are only interested in restoring the hauntings, disable all the randomizer settings in the .ini file, but ensure that `RestoreHauntings` is set to 1 or use Steam006's Silent Hill 4 fix which now includes the hauntings fix.
+If you are only interested in restoring the hauntings, disable all the randomizer settings in the .ini file, but ensure that `RestoreHauntings` is set to 1 or use [Steam006's Silent Hill 4 fix](https://community.pcgamingwiki.com/files/file/1332-silent-hill-4-pc-fix-by-steam006/) which now includes the hauntings fix.
 
 ##### Performance Note
 
@@ -84,4 +80,5 @@ For reporting bugs, please make a GitHub issue. Please include the randomizer lo
 
 ## Special Thanks
 
+* ThirteenAG, thelink2012, gabime, Thomas Monkman, and contributors to those libraries for creating the libraries used for hooking, logging, and INI parsing used to create this plugin
 * roocker666 - doing some research on how the game stores room layouts in the executable and sending it to me
